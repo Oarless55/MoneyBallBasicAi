@@ -1,0 +1,16 @@
+C:\Users\MONSTER\Desktop\moneyballC#\bin\Debug\net10.0-windows\FootballSim.exe
+C:\Users\MONSTER\Desktop\moneyballC#\bin\Debug\net10.0-windows\FootballSim.deps.json
+C:\Users\MONSTER\Desktop\moneyballC#\bin\Debug\net10.0-windows\FootballSim.runtimeconfig.json
+C:\Users\MONSTER\Desktop\moneyballC#\bin\Debug\net10.0-windows\FootballSim.dll
+C:\Users\MONSTER\Desktop\moneyballC#\bin\Debug\net10.0-windows\FootballSim.pdb
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\MoneyballGame.Form1.resources
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\FootballSim.csproj.GenerateResource.cache
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\FootballSim.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\FootballSim.AssemblyInfoInputs.cache
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\FootballSim.AssemblyInfo.cs
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\FootballSim.csproj.CoreCompileInputs.cache
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\FootballSim.dll
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\refint\FootballSim.dll
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\FootballSim.pdb
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\FootballSim.genruntimeconfig.cache
+C:\Users\MONSTER\Desktop\moneyballC#\obj\Debug\net10.0-windows\ref\FootballSim.dll
