@@ -161,15 +161,8 @@ namespace MoneyballGame
                 .OrderByDescending(x => x.Avg).ToList();
             int teamRank = leagueAvgs.FindIndex(x => x.Name == _team.Name) + 1;
 
-            string seasonGoal;
-            string goalIcon;
-            if (teamRank <= 3) { seasonGoal = "🏆 Şampiyonluk"; goalIcon = "🥇"; }
-            else if (teamRank <= 6) { seasonGoal = "🎯 Avrupa kupası"; goalIcon = "🥈"; }
-            else if (teamRank <= 12) { seasonGoal = "📊 Üst sıralara tırmanmak"; goalIcon = "📈"; }
-            else { seasonGoal = "⚠️ Ligde kalmak"; goalIcon = "🛡️"; }
-
-            sb.AppendLine($"═══ {goalIcon} AI MENAJER HEDEFİ ═══");
-            sb.AppendLine($"  {seasonGoal}");
+            sb.AppendLine($"═══ 🎯 AI MENAJER HEDEFİ ═══");
+            sb.AppendLine($"  {_team.TargetGoalText}");
             sb.AppendLine($"  Kadro Gücü: {teamAvg:F1} (Lig sırası: {teamRank}/18)");
             sb.AppendLine();
 

@@ -20,10 +20,10 @@ namespace MoneyballGame
         private Panel sidebar;
         private Panel header;
         private Panel mainContent;
-        private Panel cardStats, cardLeague, cardBoard, cardTransfers, cardIntel;
+        private Panel cardStats, cardLeague, cardBoard, cardIntel;
         private Label lblWeekInfo, lblTopScorer, lblTopAssister, lblBestPasser, lblTopTackler;
         private DataGridView dgvStandings;
-        private ListBox lstMatchLogs, lstTransferLogs;
+        private ListBox lstMatchLogs;
         private Button btnNextWeek;
         private Label lblChampion;
         private RichTextBox rtbTeamIntel;
@@ -135,34 +135,34 @@ namespace MoneyballGame
             lstMatchLogs = new ListBox { Dock = DockStyle.Fill, BackColor = FMColors.SecondaryBg, ForeColor = Color.White, BorderStyle = BorderStyle.None, Font = new Font("Segoe UI", 9) };
             cardBoard.Controls.Add(lstMatchLogs);
 
-            cardTransfers = CreateCard("GELEN/GİDEN TRANSFERLER", 1, 1);
-            lstTransferLogs = new ListBox 
-            { 
-                Dock = DockStyle.Fill, 
-                BackColor = FMColors.SecondaryBg, 
-                ForeColor = Color.Gold, 
-                BorderStyle = BorderStyle.None, 
-                Font = new Font("Segoe UI", 9, FontStyle.Italic) 
-            };
-            cardTransfers.Controls.Add(lstTransferLogs);
-
             // --- TEAM INTEL KARTI (Sağ sütun, 2 satır kaplıyor) ---
             cardIntel = CreateCard("🧠 AI TAKIM İSTİHBARATI", 2, 0);
 
+            Panel pnlSelect = new Panel { Dock = DockStyle.Top, Height = 40, Padding = new Padding(0, 5, 0, 5) };
+            
+            Label lblSelect = new Label { Text = "🔍 Takım Seç: ", Dock = DockStyle.Left, ForeColor = Color.LightGray, AutoSize = true, Font = new Font("Segoe UI", 10), Padding = new Padding(0, 3, 0, 0) };
+            pnlSelect.Controls.Add(lblSelect);
+
             cmbIntelTeam = new ComboBox
             {
-                Dock = DockStyle.Top, Height = 28,
-                BackColor = Color.FromArgb(35, 35, 55),
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(50, 50, 70),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10),
-                DropDownStyle = ComboBoxStyle.DropDownList
+                FlatStyle = FlatStyle.Standard,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Cursor = Cursors.Hand
             };
             foreach (var t in db.LeagueTable.OrderBy(t => t.Name))
                 cmbIntelTeam.Items.Add(t.Name);
             if (cmbIntelTeam.Items.Count > 0) cmbIntelTeam.SelectedIndex = 0;
             cmbIntelTeam.SelectedIndexChanged += (s, e) => RefreshTeamIntel();
-            cardIntel.Controls.Add(cmbIntelTeam);
+            
+            pnlSelect.Controls.Add(cmbIntelTeam);
+            cmbIntelTeam.BringToFront(); // Label solda kalır, combobox sağını doldurur
+            
+            cardIntel.Controls.Add(pnlSelect);
+            pnlSelect.BringToFront(); // Title'ın hemen altında görünmesi için
 
             rtbTeamIntel = new RichTextBox
             {
@@ -177,10 +177,14 @@ namespace MoneyballGame
 
             dashboardLayout.Controls.Add(cardStats, 0, 0);
             dashboardLayout.Controls.Add(cardLeague, 1, 0);
-            dashboardLayout.Controls.Add(cardIntel, 2, 0);
-            dashboardLayout.SetRowSpan(cardIntel, 2); // 2 satır kaplasın
-            dashboardLayout.Controls.Add(cardBoard, 0, 1);
-            dashboardLayout.Controls.Add(cardTransfers, 1, 1);
+            
+            // Maç sonuçları sağda, 2 satır kaplasın
+            dashboardLayout.Controls.Add(cardBoard, 2, 0);
+            dashboardLayout.SetRowSpan(cardBoard, 2); 
+            
+            // Team Intel altta, 2 sütun kaplasın
+            dashboardLayout.Controls.Add(cardIntel, 0, 1);
+            dashboardLayout.SetColumnSpan(cardIntel, 2); 
         }
 
         private Button CreateSidebarButton(string text, int top)
@@ -377,6 +381,12 @@ namespace MoneyballGame
             home.GoalsFor += homeGoals; home.GoalsAgainst += awayGoals;
             away.GoalsFor += awayGoals; away.GoalsAgainst += homeGoals;
 
+            string homeResult = homeGoals > awayGoals ? "G" : (homeGoals == awayGoals ? "B" : "M");
+            string awayResult = awayGoals > homeGoals ? "G" : (awayGoals == homeGoals ? "B" : "M");
+            
+            home.MatchHistory.Add($"Hafta {matchWeek}: {home.Name} {homeGoals} - {awayGoals} {away.Name} ({homeResult})");
+            away.MatchHistory.Add($"Hafta {matchWeek}: {home.Name} {homeGoals} - {awayGoals} {away.Name} ({awayResult})");
+
             if (homeGoals > awayGoals) { home.Points += 3; home.Won++; away.Lost++; }
             else if (awayGoals > homeGoals) { away.Points += 3; away.Won++; home.Lost++; }
             else { home.Points += 1; away.Points += 1; home.Drawn++; away.Drawn++; }
@@ -403,6 +413,9 @@ namespace MoneyballGame
             }
 
             foreach (var p in db.AllPlayers.Values) p.SimulateDevelopment();
+
+            // Değerlendirme panelini göster
+            new SeasonEvaluationForm(db).ShowDialog();
         }
 
         private void StartNewSeason()
@@ -414,8 +427,14 @@ namespace MoneyballGame
                 team.InitialBudget = team.Budget; // Set new season's start budget
                 team.CurrentSeasonSpent = 0;
                 team.CurrentSeasonEarned = 0;
+                team.MatchHistory.Clear();
             }
             foreach (var player in db.AllPlayers.Values) { player.ResetSeasonStats(); }
+            
+            // Yeni sezon hedeflerini belirle
+            db.CalculateTeamGoals();
+            RefreshTeamIntel();
+
             btnNextWeek.Text = "Sonraki Haftayı Oyna ⚽";
             btnNextWeek.BackColor = Color.FromArgb(0, 160, 0);
             lstMatchLogs.Items.Clear();

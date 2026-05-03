@@ -133,6 +133,13 @@ namespace MoneyballGame
         public int CurrentSeasonEarned { get; set; } = 0;
         public int InitialBudget { get; set; }
 
+        // Season Goals
+        public int TargetMaxRank { get; set; } = 18;
+        public string TargetGoalText { get; set; } = "Ligde kalmak";
+
+        // Match Logs for the current season
+        public List<string> MatchHistory { get; set; } = new List<string>();
+
         public Team(string name, int budget)
         {
             Name = name;
@@ -231,6 +238,29 @@ namespace MoneyballGame
                 string pos = faPositions[i % faPositions.Length];
                 Player p = CreatePlayer(ref playerId, name, pos, rnd);
                 FreeAgents.Add(p);
+            }
+
+            CalculateTeamGoals();
+        }
+
+        public void CalculateTeamGoals()
+        {
+            var leagueAvgs = LeagueTable
+                .Select(t => new { 
+                    Team = t, 
+                    Avg = t.Roster.Count > 0 ? t.Roster.Average(p => (p.Passing + p.Physical + p.Finishing + p.Heading + p.Technique) / 5.0) : 0 
+                })
+                .OrderByDescending(x => x.Avg).ToList();
+
+            for (int i = 0; i < leagueAvgs.Count; i++)
+            {
+                var team = leagueAvgs[i].Team;
+                int rank = i + 1;
+                
+                if (rank <= 3) { team.TargetGoalText = "🏆 Şampiyonluk"; team.TargetMaxRank = 3; }
+                else if (rank <= 6) { team.TargetGoalText = "🎯 Avrupa Kupası"; team.TargetMaxRank = 6; }
+                else if (rank <= 12) { team.TargetGoalText = "📊 Üst sıralara tırmanmak"; team.TargetMaxRank = 12; }
+                else { team.TargetGoalText = "⚠️ Ligde kalmak"; team.TargetMaxRank = 15; }
             }
         }
 
